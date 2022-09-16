@@ -14,15 +14,16 @@ export default class extends HTMLElement {
 
         const taskBox = document.querySelector("task-box");
         var span = taskBox.#shadow.querySelector(".close");
-        span.onclick = function() {
-            taskBox.close();
-        }
 
-        function keyPress (e) {
+        span.addEventListener('click', function() {
+            taskBox.close();
+        });
+
+        document.body.addEventListener('keydown', (e) => {
             if(e.key === "Escape") {
                 taskBox.close();
             }
-        }
+        });
     }
 
     #createStyle() {

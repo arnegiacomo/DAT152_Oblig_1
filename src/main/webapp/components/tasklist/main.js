@@ -64,7 +64,7 @@ export default class extends HTMLElement {
 
     changestatusCallback(callback) {
         this.#shadow.querySelectorAll('.status-select').forEach((selector) => {
-            selector.onchange = function() {
+            selector.addEventListener('change', function() {
                 const id = this.parentNode.parentNode.id;
                 const status = selector.options[selector.selectedIndex].text;
                 const taskTitle =  this.parentNode.parentNode.firstElementChild.textContent;
@@ -74,20 +74,20 @@ export default class extends HTMLElement {
                 }
 
                 selector.value = 'DEFAULT';
-            }
+            }); 
         });
     }
 
     deletetaskCallback(callback) {
         this.#shadow.querySelectorAll('.remove-button').forEach((deleteButton) => {
-            deleteButton.onclick = function() {
+            deleteButton.addEventListener('click', function() {
                 const id = this.parentNode.parentNode.id;
                 const taskName =  this.parentNode.parentNode.firstElementChild.textContent;
 
                 if(confirm('Delete task ' + '\'' + taskName + '\'' + '?')) {
                     callback(id);
                 }
-            }
+            });
         });
     }
 
