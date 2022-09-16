@@ -65,6 +65,7 @@ export default class extends HTMLElement {
     changestatusCallback(callback) {
         this.#shadow.querySelectorAll('.status-select').forEach((selector) => {
             selector.addEventListener('change', function() {
+
                 const id = this.parentNode.parentNode.id;
                 const status = selector.options[selector.selectedIndex].text;
                 const taskTitle =  this.parentNode.parentNode.firstElementChild.textContent;
@@ -116,6 +117,7 @@ export default class extends HTMLElement {
         wrapper.setAttribute('id', newtask.id);
         wrapper.insertAdjacentHTML('beforeend', newtaskHTML);
         this.#shadow.querySelector('.task-list-table').appendChild(wrapper);
+        this.#shadow.getElementById('status-text').innerText = "";
     }
     
     updateTask(status) {

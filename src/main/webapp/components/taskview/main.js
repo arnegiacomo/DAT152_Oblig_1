@@ -11,8 +11,6 @@ export default class extends HTMLElement {
         this.#getTasklist();
 
         const taskboxes = this.#taskboxes;
-        const tasklists = this.#tasklists;
-        const view = this;
         
         this.#tasklists.forEach((tasklist) => {
             tasklist.addtaskCallback(function() {
@@ -23,7 +21,7 @@ export default class extends HTMLElement {
         });
 
         this.#taskboxes.forEach((taskbox) => {
-            taskbox.newtaskCallback(this.#postTask);
+            taskbox.newtaskCallback(this.#postTask.bind(this));
             taskbox.newtaskCallback(function() {
                 taskbox.close();
             });
@@ -37,8 +35,12 @@ export default class extends HTMLElement {
                 const object = await response.json();
                 if (typeof object.responseStatus != "undefined") {
                     if (object.responseStatus) {
+                        console.log(object);
                         this.#taskboxes.forEach((taskbox) => {
                             taskbox.setStatuseslist(object.allstatuses);
+                        });
+                        this.#tasklists.forEach((tasklist) => {
+                            tasklist.setStatuseslist(object.allstatuses);
                         });
                     } else {
                         console.log("Could not connect to server");
@@ -60,6 +62,7 @@ export default class extends HTMLElement {
                 if (typeof object.responseStatus != "undefined") {
                     if (object.responseStatus) {
                         this.#tasklists.forEach((tasklist) => {
+                            console.log(object);
                             object.tasks.forEach((task) => {
                                 tasklist.showTask(task);
                             });
@@ -67,6 +70,8 @@ export default class extends HTMLElement {
                                 tasklist.noTask();
                             }
                             tasklist.enableaddtask();
+                            tasklist.changestatusCallback(this.#putTask.bind(this));
+                            tasklist.deletetaskCallback(this.#deleteTask.bind(this));
                         });
                     } else {
                         console.log("Could not connect to server");
@@ -76,7 +81,7 @@ export default class extends HTMLElement {
                 }
             }
         } catch (e) {
-            console.log("Could not connect to server");
+            console.log("Could not connect to server. Reason: " + e);
         }
     }
 
@@ -95,7 +100,11 @@ export default class extends HTMLElement {
                 const object = await response.json();
                 if (typeof object.responseStatus != "undefined") {
                     if (object.responseStatus) {
-
+                        console.log(object);
+                        this.#tasklists.forEach((tasklist) => {
+                            tasklist.showTask(object.task);
+                        });
+                        // TODO kan ikke forandre nye tasks
                     } else {
                         console.log("Could not connect to server");
                     }
@@ -108,11 +117,71 @@ export default class extends HTMLElement {
         }
     }
 
-    async #putTask(task) {
+    async #putTask(id, status) {
+        const obj = {
+            "status" : status
+        }
+        const requestSettings = {
+            "method": "PUT",
+            "headers": { "Content-Type": "application/json; charset=utf-8" },
+            "body": JSON.stringify(obj),
+            "cache": "no-cache",
+            "redirect": "error"
+        };
 
+        try {
+            const response = await fetch("../TaskServices/api/services/task/" + id, requestSettings);
+            if (response.ok) {
+                const object = await response.json();
+                if (typeof object.responseStatus != "undefined") {
+                    if (object.responseStatus) {
+                        console.log(object);
+                        const newStatus = {
+                            "status" : object.status,
+                            "id" : object.id
+                        }
+                        this.#tasklists.forEach((tasklist) => {
+                            tasklist.updateTask(newStatus);
+                        });
+                    } else {
+                        console.log("Could not connect to server");
+                    }
+                } else {
+                    console.log("Could not connect to server");
+                }
+            }
+        } catch (e) {
+            console.log("Could not connect to server. Reason: " + e);
+        }
     }
 
-    async #deleteTask(task) {
-        
+    async #deleteTask(id) {
+        const requestSettings = {
+            "method": "DELETE",
+            "headers": { "Content-Type": "application/json; charset=utf-8" },
+            "cache": "no-cache",
+            "redirect": "error"
+        };
+
+        try {
+            const response = await fetch("../TaskServices/api/services/task/" + id, requestSettings);
+            if (response.ok) {
+                const object = await response.json();
+                if (typeof object.responseStatus != "undefined") {
+                    if (object.responseStatus) {
+                        console.log(object);
+                        this.#tasklists.forEach((tasklist) => {
+                            tasklist.removeTask(id);
+                        });
+                    } else {
+                        console.log("Could not connect to server");
+                    }
+                } else {
+                    console.log("Could not connect to server");
+                }
+            }
+        } catch (e) {
+            console.log("Could not connect to server. Reason: " + e);
+        }
     }
 }
