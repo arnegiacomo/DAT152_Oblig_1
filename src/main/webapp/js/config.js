@@ -1,10 +1,5 @@
 "use strict";
 
-/**
- * <p>Object with configurations. Currently, the only parameter is the URL of OrganizerServices.</p>
- *
- * @author Bjarte Kileng
- */
 const config = {
     /**
      * <p>The top URL of the services of Mservices, relative to the application. The services will be:</p>
