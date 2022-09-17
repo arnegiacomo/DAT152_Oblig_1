@@ -103,8 +103,10 @@ export default class extends HTMLElement {
                         console.log(object);
                         this.#tasklists.forEach((tasklist) => {
                             tasklist.showTask(object.task);
+                            console.log(object.task);
                         });
-                        // TODO kan ikke forandre nye tasks
+                        // TODO kan ikke forandre nye tasks pga de ikke har ID, reload nødvendig
+                        // Dette skyldes feil i API-et
                     } else {
                         console.log("Could not connect to server");
                     }

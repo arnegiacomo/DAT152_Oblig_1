@@ -3,11 +3,8 @@ export default class extends HTMLElement {
     #statuses;
 
     constructor() {
-        // Always call super first in constructor
         super();
 
-        // Entry point to the shadow DOM
-        // If open, property "shadowRoot" will be an outside entrance to the shadow DOM
         this.#shadow = this.attachShadow({ mode: 'closed' });
         this.#createStyle();
         this.#createHTML();

@@ -3,16 +3,13 @@ export default class extends HTMLElement {
     #statuses;
 
     constructor() {
-        // Always call super first in constructor
         super();
 
-        // Entry point to the shadow DOM
-        // If open, property "shadowRoot" will be an outside entrance to the shadow DOM
         this.#shadow = this.attachShadow({ mode: 'closed' });
         this.#createStyle();
         this.#createHTML();
 
-        const taskBox = document.querySelector("task-box");
+        const taskBox = this;
         var span = taskBox.#shadow.querySelector(".close");
 
         span.addEventListener('click', function() {
@@ -98,6 +95,8 @@ export default class extends HTMLElement {
     }
 
     show() {
+        this.#shadow.querySelector('.status-select').innerHTML = "";
+
         let statusesString = "";
         this.#statuses.forEach((status) => {
             const option = new Option(status, status);
@@ -119,6 +118,7 @@ export default class extends HTMLElement {
                 title : shadow.querySelector(".input-field").value,
                 status : shadow.querySelector(".status-select").value
             };
+            shadow.querySelector(".input-field").value = "";
             callback(task);
         });
 
